@@ -4,7 +4,8 @@ import java.io.Serializable;
 
 class Node implements Serializable
 {
-    int element;
+    String ang;
+    String pol;
     int h;
     Node leftChild;
     Node rightChild;
@@ -13,14 +14,22 @@ class Node implements Serializable
     {
         leftChild = null;
         rightChild = null;
-        element = 0;
+        ang = "";
+        pol = "";
         h = 0;
     }
-    public Node(int element)
+    public Node(String ang)
     {
         leftChild = null;
         rightChild = null;
-        this.element = element;
+        this.ang = ang;
+        h = 0;
+    }
+    public Node(String ang, String pol){
+        leftChild = null;
+        rightChild = null;
+        this.ang = ang;
+        this.pol = pol;
         h = 0;
     }
 }

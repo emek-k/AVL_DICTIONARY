@@ -1,12 +1,6 @@
 package com.oop_class;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 
 
 public class Serialize {
@@ -15,7 +9,7 @@ public class Serialize {
 
     public void write(Node rootNode){
         try {
-            FileOutputStream f = new FileOutputStream(new File("myObjects.txt"));
+            FileOutputStream f = new FileOutputStream("myObjects.txt");
             ObjectOutputStream o = new ObjectOutputStream(f);
 
             // Write objects to file
@@ -33,15 +27,15 @@ public class Serialize {
 
     public void read(ConstructAVLTree avl){
         try {
-            FileInputStream fi = new FileInputStream(new File("myObjects.txt"));
+            FileInputStream fi = new FileInputStream("myObjects.txt");
             ObjectInputStream oi = new ObjectInputStream(fi);
 
             // Read objects
             //When oi reaches end of the file it throws an IO exception
             for(;;){
                 Node node = (Node) oi.readObject();
-                avl.insertElement(node.element);
-                System.out.println(node.element);
+                avl.insertElement(node.ang, node.pol);
+                System.out.println(node.ang + " " + node.pol);
             }
         } catch (FileNotFoundException e) {
             System.out.println("File not found");
@@ -60,25 +54,7 @@ public class Serialize {
 
         writeInOrderTraversal(head.leftChild,o);
         o.writeObject(head);
-        System.out.println("SAVED " + head.element);
+        System.out.println("SAVED " + head.ang + " " + head.pol);
         writeInOrderTraversal(head.rightChild,o);
     }
-
-    /*
-    public static void main(String[] args) {
-        System.out.println("TEST");
-
-        ConstructAVLTree avl = new ConstructAVLTree();
-
-        avl.insertElement(1);
-        avl.insertElement(2);
-        avl.insertElement(3);
-
-        avl.inorderTraversal();
-        Node root = avl.getRootNode();
-        write(root);
-
-        read(avl);
-    }
-     */
 }
