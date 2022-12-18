@@ -20,74 +20,6 @@ class ConstructAVLTree
         this.rootNode = root;
     }
 
-    public void insertElement(String ang, String pol)
-    {
-        rootNode = insertElement(ang, pol, rootNode);
-    }
-
-
-    public Node nodeWithMimumValue(Node node) {
-        Node current = node;
-        while (current.leftChild != null)
-            current = current.leftChild;
-        return current;
-    }
-    public Node deleteNode(Node node, String ang) {
-        // Find the node to be deleted and remove it
-        if (node == null)
-            return null;
-        if (ang.compareTo(node.ang) < 0)
-            node.leftChild = deleteNode(node.leftChild, ang);
-        else if (ang.compareTo(node.ang) > 0)
-            node.rightChild = deleteNode(node.rightChild, ang);
-        else {
-            if ((node.leftChild == null) || (node.rightChild == null)) {
-                Node temp = null;
-                if (temp == node.leftChild)
-                    temp = node.rightChild;
-                else
-                    temp = node.leftChild;
-                if (temp == null) {
-                    node = null;
-                } else
-                    node = temp;
-            } else {
-                Node temp = nodeWithMimumValue(node.rightChild);
-                node.ang = temp.ang;
-                node.pol = temp.pol;
-                node.rightChild = deleteNode(node.rightChild, temp.ang);
-            }
-        }
-        if (node == null)
-            return node;
-
-        // Update the balance factor of each node and balance the tree
-        node.h = max(getHeight(node.leftChild), getHeight(node.rightChild)) + 1;
-        int balanceFactor = getBalanceFactor(node);
-        if (balanceFactor > 1) {
-            if (getBalanceFactor(node.leftChild) >= 0) {
-                return rotateWithRightChild(node);
-            } else {
-                node.leftChild = rotateWithLeftChild(node.leftChild);
-                return rotateWithRightChild(node);
-            }
-        }
-        if (balanceFactor < -1) {
-            if (getBalanceFactor(node.rightChild) <= 0) {
-                return rotateWithLeftChild(node);
-            } else {
-                node.rightChild = rotateWithRightChild(node.rightChild);
-                return rotateWithLeftChild(node);
-            }
-        }
-        return node;
-    }
-    int getBalanceFactor(Node N) {
-        if (N == null)
-            return 0;
-        return getHeight(N.leftChild) - getHeight(N.rightChild);
-    }
-
     private int getHeight(Node node )
     {
         return node == null ? -1 : node.h;
@@ -98,6 +30,75 @@ class ConstructAVLTree
         return Math.max(leftNodeHeight, rightNodeHeight);
     }
 
+    int getBalanceFactor(Node N) {
+        if (N == null)
+            return 0;
+        return getHeight(N.left) - getHeight(N.right);
+    }
+
+    public void insertElement(String ang, String pol)
+    {
+        rootNode = insertElement(ang, pol, rootNode);
+    }
+
+    public Node nodeWithMimumValue(Node node) {
+        Node current = node;
+        while (current.left != null)
+            current = current.left;
+        return current;
+    }
+    public Node deleteNode(Node node, String ang) {
+        // Find the node to be deleted and remove it
+        if (node == null)
+            return null;
+        if (ang.compareTo(node.ang) < 0)
+            node.left = deleteNode(node.left, ang);
+        else if (ang.compareTo(node.ang) > 0)
+            node.right = deleteNode(node.right, ang);
+        else {
+            if ((node.left == null) || (node.right == null)) {
+                Node temp = null;
+                if (temp == node.left)
+                    temp = node.right;
+                else
+                    temp = node.left;
+                if (temp == null) {
+                    node = null;
+                } else
+                    node = temp;
+            } else {
+                Node temp = nodeWithMimumValue(node.right);
+                node.ang = temp.ang;
+                node.pol = temp.pol;
+                node.right = deleteNode(node.right, temp.ang);
+            }
+        }
+        if (node == null)
+            return node;
+
+        // Update the balance factor of each node and balance the tree
+        node.h = max(getHeight(node.left), getHeight(node.right)) + 1;
+        int balanceFactor = getBalanceFactor(node);
+        if (balanceFactor > 1) {
+            if (getBalanceFactor(node.left) >= 0) {
+                return rotateRight(node);
+            } else {
+                node.left = rotateLeft(node.left);
+                return rotateRight(node);
+            }
+        }
+        if (balanceFactor < -1) {
+            if (getBalanceFactor(node.right) <= 0) {
+                return rotateLeft(node);
+            } else {
+                node.right = rotateRight(node.right);
+                return rotateLeft(node);
+            }
+        }
+        return node;
+    }
+
+
     //create insertElement() method to insert data in the AVL Tree recursively
     private Node insertElement(String ang, String pol, Node node) {
         if (node == null)
@@ -105,59 +106,59 @@ class ConstructAVLTree
             //insert a node in case when the given element is lesser than the element of the root node
         else if (ang.compareTo(node.ang) < 0)
         {
-            node.leftChild = insertElement( ang,pol, node.leftChild );
-            if( getHeight( node.leftChild ) - getHeight( node.rightChild ) == 2 )
-                if( ang.compareTo(node.leftChild.ang) < 0 )
-                    node = rotateWithLeftChild( node );
+            node.left = insertElement( ang,pol, node.left );
+            if( getHeight( node.left ) - getHeight( node.right ) == 2 )
+                if( ang.compareTo(node.left.ang) < 0 )
+                    node = rotateLeft( node );
                 else
-                    node = doubleWithLeftChild( node );
+                    node = doubleLeft( node );
         }
         else if( ang.compareTo(node.ang) > 0 )
         {
-            node.rightChild = insertElement( ang, pol, node.rightChild );
-            if( getHeight( node.rightChild ) - getHeight( node.leftChild ) == 2 )
+            node.right = insertElement( ang, pol, node.right );
+            if( getHeight( node.right ) - getHeight( node.left ) == 2 )
                 if( ang.compareTo(node.ang) > 0)
-                    node = rotateWithRightChild( node );
+                    node = rotateRight( node );
                 else
-                    node = doubleWithRightChild( node );
+                    node = doubleRight( node );
         }
         // if the element is already present in the tree, we will do nothing
 
-        node.h = getMaxHeight( getHeight( node.leftChild ), getHeight( node.rightChild ) ) + 1;
+        node.h = getMaxHeight( getHeight( node.left ), getHeight( node.right ) ) + 1;
 
         return node;
     }
 
-    // creating rotateWithLeftChild() method to perform rotation of binary tree node with left child
-    private Node rotateWithLeftChild(Node node2) {
-        Node node1 = node2.leftChild;
-        node2.leftChild = node1.rightChild;
-        node1.rightChild = node2;
-        node2.h = getMaxHeight( getHeight( node2.leftChild ), getHeight( node2.rightChild ) ) + 1;
-        node1.h = getMaxHeight( getHeight( node1.leftChild ), node2.h ) + 1;
+    // creating rotateLeft() method to perform rotation of binary tree node with left child
+    private Node rotateLeft(Node node2) {
+        Node node1 = node2.left;
+        node2.left = node1.right;
+        node1.right = node2;
+        node2.h = getMaxHeight( getHeight( node2.left ), getHeight( node2.right ) ) + 1;
+        node1.h = getMaxHeight( getHeight( node1.left ), node2.h ) + 1;
         return node1;
     }
 
-    // creating rotateWithRightChild() method to perform rotation of binary tree node with right child
-    private Node rotateWithRightChild(Node node1) {
-        Node node2 = node1.rightChild;
-        node1.rightChild = node2.leftChild;
-        node2.leftChild = node1;
-        node1.h = getMaxHeight( getHeight( node1.leftChild ), getHeight( node1.rightChild ) ) + 1;
-        node2.h = getMaxHeight( getHeight( node2.rightChild ), node1.h ) + 1;
+    // creating rotateRight() method to perform rotation of binary tree node with right child
+    private Node rotateRight(Node node1) {
+        Node node2 = node1.right;
+        node1.right = node2.left;
+        node2.left = node1;
+        node1.h = getMaxHeight( getHeight( node1.left ), getHeight( node1.right ) ) + 1;
+        node2.h = getMaxHeight( getHeight( node2.right ), node1.h ) + 1;
         return node2;
     }
 
-    //create doubleWithLeftChild() method to perform double rotation of binary tree node. This method first rotate the left child with its right child, and after that, node3 with the new left child
-    private Node doubleWithLeftChild(Node node3) {
-        node3.leftChild = rotateWithRightChild( node3.leftChild );
-        return rotateWithLeftChild( node3 );
+    //create doubleLeft() method to perform double rotation of binary tree node. This method first rotate the left child with its right child, and after that, node3 with the new left child
+    private Node doubleLeft(Node node3) {
+        node3.left = rotateRight( node3.left );
+        return rotateLeft( node3 );
     }
 
-    //create doubleWithRightChild() method to perform double rotation of binary tree node. This method first rotate the right child with its left child and after that node1 with the new right child
-    private Node doubleWithRightChild(Node node1) {
-        node1.rightChild = rotateWithLeftChild( node1.rightChild );
-        return rotateWithRightChild( node1 );
+    //create doubleRight() method to perform double rotation of binary tree node. This method first rotate the right child with its left child and after that node1 with the new right child
+    private Node doubleRight(Node node1) {
+        node1.right = rotateLeft( node1.right );
+        return rotateRight( node1 );
     }
 
     public int getTotalNumberOfNodes()
@@ -171,8 +172,8 @@ class ConstructAVLTree
         else
         {
             int length = 1;
-            length = length + getTotalNumberOfNodes(head.leftChild);
-            length = length + getTotalNumberOfNodes(head.rightChild);
+            length = length + getTotalNumberOfNodes(head.left);
+            length = length + getTotalNumberOfNodes(head.right);
             return length;
         }
     }
@@ -187,13 +188,16 @@ class ConstructAVLTree
         while ((head != null) && !check)
         {
             if (ang.compareTo(head.ang) < 0)
-                head = head.leftChild;
+                head = head.left;
             else if (ang.compareTo(head.ang) > 0)
-                head = head.rightChild;
+                head = head.right;
             else
             {
                 check = true;
-                System.out.println(head.ang + " " + head.pol);
+                if(head.pol.equals(""))
+                    System.out.println(head.ang + " " + "brak tlumaczen");
+                else
+                    System.out.println(head.ang + " " + head.pol);
                 break;
             }
             check = searchElement(head, ang);
@@ -208,9 +212,9 @@ class ConstructAVLTree
     private void inorderTraversal(Node head) {
         if (head != null)
         {
-            inorderTraversal(head.leftChild);
+            inorderTraversal(head.left);
             System.out.println(head.ang + " " + head.pol);
-            inorderTraversal(head.rightChild);
+            inorderTraversal(head.right);
         }
     }
 
@@ -223,8 +227,8 @@ class ConstructAVLTree
         if (head != null)
         {
             System.out.println(head.ang + " " + head.pol);
-            preorderTraversal(head.leftChild);
-            preorderTraversal(head.rightChild);
+            preorderTraversal(head.left);
+            preorderTraversal(head.right);
         }
     }
 
@@ -236,8 +240,8 @@ class ConstructAVLTree
 
     private void postorderTraversal(Node head) {
         if (head != null) {
-            postorderTraversal(head.leftChild);
-            postorderTraversal(head.rightChild);
+            postorderTraversal(head.left);
+            postorderTraversal(head.right);
             System.out.println(head.ang + " " + head.pol);
         }
     }
