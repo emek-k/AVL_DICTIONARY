@@ -40,6 +40,9 @@ class ConstructAVLTree
     {
         rootNode = insertElement(ang, pol, rootNode);
     }
+    public void deleteElement(String ang){
+        rootNode = deleteElement(rootNode, ang);
+    }
 
     public Node nodeWithMimumValue(Node node) {
         Node current = node;
@@ -47,14 +50,14 @@ class ConstructAVLTree
             current = current.left;
         return current;
     }
-    public Node deleteNode(Node node, String ang) {
+    private Node deleteElement(Node node, String ang) {
         // Find the node to be deleted and remove it
         if (node == null)
             return null;
         if (ang.compareTo(node.ang) < 0)
-            node.left = deleteNode(node.left, ang);
+            node.left = deleteElement(node.left, ang);
         else if (ang.compareTo(node.ang) > 0)
-            node.right = deleteNode(node.right, ang);
+            node.right = deleteElement(node.right, ang);
         else {
             if ((node.left == null) || (node.right == null)) {
                 Node temp = null;
@@ -70,7 +73,7 @@ class ConstructAVLTree
                 Node temp = nodeWithMimumValue(node.right);
                 node.ang = temp.ang;
                 node.pol = temp.pol;
-                node.right = deleteNode(node.right, temp.ang);
+                node.right = deleteElement(node.right, temp.ang);
             }
         }
         if (node == null)
@@ -123,7 +126,6 @@ class ConstructAVLTree
                     node = doubleRight( node );
         }
         // if the element is already present in the tree, we will do nothing
-
         node.h = getMaxHeight( getHeight( node.left ), getHeight( node.right ) ) + 1;
 
         return node;

@@ -40,7 +40,7 @@ public class Main
                     System.out.println("\nDeleting word.");
                     System.out.print("Ang: ");
                     ang = sc.next();
-                    avl.setRootNode(avl.deleteNode(avl.getRootNode(), ang));
+                    avl.deleteElement(ang);
                 }
                 case 3 -> {
                     System.out.println("Enter word to search");
